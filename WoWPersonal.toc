@@ -1,0 +1,22 @@
+## Interface: 120000
+## Title: WoWPersonal
+## Notes: Addon de qualidade de vida para World of Warcraft
+## Author: Você
+## Version: 2.0.0
+## SavedVariables: WoWPersonal_DB
+## LoadSavedVariablesFirst: 1
+
+## DefaultState: Enabled
+
+Environment.lua
+Localization.lua
+
+Modules\Visibility\Visibility.lua
+Modules\Visibility\VisibilityConfig.lua
+Modules\Visibility\CooldownManagerIntegration.lua
+Modules\Visibility\EditModeIntegration.lua
+
+Core.lua
+Config.lua
+UI.lua
+MinimapButton.lua
