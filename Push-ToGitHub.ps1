@@ -14,7 +14,9 @@ if (-not (Test-Path $gh)) {
     Write-Error "Instale o GitHub CLI (winget install GitHub.cli) ou extraia gh para $env:TEMP\gh-portable\bin\"
 }
 
-& $gh auth status 2>$null | Out-Null
+$ErrorActionPreference = "SilentlyContinue"
+& $gh auth status *> $null
+$ErrorActionPreference = "Stop"
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Execute primeiro: & `"$gh`" auth login -h github.com -p https -w"
     exit 1
