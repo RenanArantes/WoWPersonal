@@ -19,6 +19,12 @@ local SCENARIO_LABELS = {
 	instance_pvp = L["In PvP Instance"],
 	open_world   = L["In Open World"],
 }
+local SCENARIO_COLORS = {
+	city         = "|cFF4FC3F7",
+	instance_pve = "|cFF81C784",
+	instance_pvp = "|cFFE57373",
+	open_world   = "|cFFFFB74D",
+}
 
 --- Garante que db.scenarios[key] existe e tem as chaves padrão
 ---@param db table
@@ -38,13 +44,34 @@ end
 -----------------------------------------------------------
 local mod = addon.modules["visibility"]
 
---- Adiciona as configurações de visibilidade à categoria do painel de opções.
----@param category table  Categoria registrada via Settings.RegisterVerticalLayoutCategory
-function mod:AddSettings(category)
+--- Adiciona as configurações de visibilidade à subcategoria do painel de opções.
+---@param category table   Subcategoria registrada via Settings.RegisterVerticalLayoutSubcategory
+---@param layout   table   Layout vertical associado à subcategoria
+function mod:AddSettings(category, layout)
 	if not Settings then return end
+
+	-- Checkbox: modo debug (movido da antiga subcategoria "Geral")
+	local function GetDebugValue()
+		return addon.db and addon.db.debugMode
+	end
+	local function SetDebugValue(value)
+		if addon.db then addon.db.debugMode = value end
+	end
+	local debugSetting = Settings.RegisterProxySetting(
+		category,
+		"WoWPersonal_DebugMode",
+		Settings.VarType.Boolean,
+		L["Debug Mode"],
+		Settings.Default.False,
+		GetDebugValue,
+		SetDebugValue
+	)
+	Settings.CreateCheckbox(category, debugSetting, L["Toggle debug output"])
 
 	for _, scenarioKey in ipairs(SCENARIO_ORDER) do
 		local label = SCENARIO_LABELS[scenarioKey] or scenarioKey
+		local color = SCENARIO_COLORS[scenarioKey] or ""
+		layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(color .. label .. "|r"))
 
 		-- Checkbox: mostrar neste cenário
 		local function GetEnabled()

@@ -324,6 +324,12 @@ addon:RegisterModule({
 	end,
 
 	OnDisable = function(self)
+		for _, frame in pairs(addon.registeredFrames) do
+			if frame then
+				frame:Show()
+				frame:SetAlpha(1)
+			end
+		end
 		addon:UnregisterEvent("PLAYER_ENTERING_WORLD")
 		addon:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
 		addon:UnregisterEvent("PLAYER_REGEN_DISABLED")

@@ -31,35 +31,33 @@ function addon:CreateConfigPanel()
 	))
 	Settings.RegisterAddOnCategory(category)
 
-	-- Subcategoria "Geral": configurações globais do addon
-	local generalCat = Settings.RegisterVerticalLayoutSubcategory(category, L["General"] or "Geral")
-	Settings.RegisterAddOnCategory(generalCat)
-
-	local function GetDebugValue()
-		return addon.db and addon.db.debugMode
-	end
-	local function SetDebugValue(value)
-		if addon.db then addon.db.debugMode = value end
-	end
-	local debugSetting = Settings.RegisterProxySetting(
-		generalCat,
-		"WoWPersonal_DebugMode",
-		Settings.VarType.Boolean,
-		L["Debug Mode"],
-		Settings.Default.False,
-		GetDebugValue,
-		SetDebugValue
-	)
-	Settings.CreateCheckbox(generalCat, debugSetting, L["Toggle debug output"])
-
-	-- Uma subcategoria por módulo (em ordem)
+	-- Toggles de módulos
 	local orderedMods = {}
 	for _, def in pairs(addon.modules) do
 		orderedMods[#orderedMods + 1] = def
 	end
 	table.sort(orderedMods, function(a, b) return (a.order or 100) < (b.order or 100) end)
+
+	layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("Funcionalidades"))
 	for _, def in ipairs(orderedMods) do
-		if addon:IsModuleEnabled(def.id) and def.AddSettings then
+		local id = def.id
+		local function GetEnabled() return addon:IsModuleEnabled(id) end
+		local function SetEnabled(value) addon:SetModuleEnabled(id, value) end
+		local setting = Settings.RegisterProxySetting(
+			category,
+			"WoWPersonal_Module_" .. id,
+			Settings.VarType.Boolean,
+			def.name,
+			Settings.Default.True,
+			GetEnabled,
+			SetEnabled
+		)
+		Settings.CreateCheckbox(category, setting, "Ativar ou desativar " .. def.name)
+	end
+
+	-- Uma subcategoria por módulo (em ordem)
+	for _, def in ipairs(orderedMods) do
+		if def.AddSettings then
 			local subcat, sublayout = Settings.RegisterVerticalLayoutSubcategory(category, def.name)
 			Settings.RegisterAddOnCategory(subcat)
 			def:AddSettings(subcat, sublayout)
