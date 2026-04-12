@@ -33,6 +33,9 @@ local DEFAULTS = {
 	registeredFrames = {},
 	-- Estado de habilitação por módulo { [id] = { enabled = bool } }
 	modules = {},
+	-- Opacidade total após sair de combate
+	outOfCombatFadeEnabled = false,
+	outOfCombatFadeDelay = 3,
 	scenarios = {
 		city = { enabled = true, transparencyInCombat = 1.0, transparencyOutOfCombat = 1.0 },
 		instance_pve = { enabled = true, transparencyInCombat = 1.0, transparencyOutOfCombat = 1.0 },
