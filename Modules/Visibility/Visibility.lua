@@ -45,6 +45,10 @@ addon.currentState = {
 -- Frames registrados para controle de visibilidade
 addon.registeredFrames = {}
 
+-- Timer e flag para opacidade total pós-combate
+addon.outOfCombatFadeTimer = nil
+addon.fullOpacityOverride = false
+
 -- Detecção de estado
 -----------------------------------------------------------
 
@@ -126,6 +130,38 @@ function addon:GetScenarioConfig(scenarioKey)
 	}
 end
 
+--- Cancela o timer de fade pós-combate e remove o override de opacidade total
+function addon:CancelOutOfCombatFade()
+	if self.outOfCombatFadeTimer then
+		---@diagnostic disable-next-line: undefined-field
+		self.outOfCombatFadeTimer:Cancel()
+		self.outOfCombatFadeTimer = nil
+	end
+	self.fullOpacityOverride = false
+end
+
+--- Ativa o override de opacidade total e atualiza todos os frames
+function addon:ApplyFullOpacityOverride()
+	self.fullOpacityOverride = true
+	self:UpdateAllFrameVisibility()
+end
+
+--- Agenda a transição para opacidade total após N segundos fora de combate
+function addon:ScheduleOutOfCombatFade()
+	self:CancelOutOfCombatFade()
+	local db = self.db
+	if not db or not db.outOfCombatFadeEnabled then return end
+	local delay = db.outOfCombatFadeDelay or 3
+	if delay <= 0 then
+		self:ApplyFullOpacityOverride()
+		return
+	end
+	self.outOfCombatFadeTimer = C_Timer.After(delay, function()
+		self.outOfCombatFadeTimer = nil
+		addon:ApplyFullOpacityOverride()
+	end)
+end
+
 --- Atualiza a visibilidade de um frame específico baseado no cenário atual
 ---@param frameName string
 ---@param frame Frame|nil
@@ -146,7 +182,12 @@ function addon:UpdateFrameVisibility(frameName, frame)
 
 	if config.enabled then
 		local inCombat = self.currentState.inCombat
-		local transparency = inCombat and config.transparencyInCombat or config.transparencyOutOfCombat
+		local transparency
+		if self.fullOpacityOverride and not inCombat then
+			transparency = 0.0
+		else
+			transparency = inCombat and config.transparencyInCombat or config.transparencyOutOfCombat
+		end
 		frame:SetAlpha(transparency)
 		frame:Show()
 		if self.db and self.db.debugMode then
@@ -281,13 +322,23 @@ end
 --- Handler de eventos de visibilidade (despachado por Environment.lua)
 ---@param event FrameEvent
 function addon:OnEvent(event, ...)
-	if event == "PLAYER_ENTERING_WORLD" or
-	   event == "ZONE_CHANGED_NEW_AREA" or
-	   event == "PLAYER_REGEN_DISABLED" or
-	   event == "PLAYER_REGEN_ENABLED" or
-	   event == "GROUP_ROSTER_UPDATE" or
-	   event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" or
-	   event == "PLAYER_UPDATE_RESTING" then
+	if event == "PLAYER_REGEN_DISABLED" then
+		-- Entrou em combate: cancela o timer de fade e restaura transparência de combate
+		self:CancelOutOfCombatFade()
+		C_Timer.After(0.1, function()
+			self:UpdateCurrentState()
+		end)
+	elseif event == "PLAYER_REGEN_ENABLED" then
+		-- Saiu de combate: aplica transparência fora de combate, depois agenda fade se ativo
+		C_Timer.After(0.1, function()
+			self:UpdateCurrentState()
+			self:ScheduleOutOfCombatFade()
+		end)
+	elseif event == "PLAYER_ENTERING_WORLD" or
+	       event == "ZONE_CHANGED_NEW_AREA" or
+	       event == "GROUP_ROSTER_UPDATE" or
+	       event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" or
+	       event == "PLAYER_UPDATE_RESTING" then
 		C_Timer.After(0.1, function()
 			self:UpdateCurrentState()
 		end)
@@ -324,6 +375,7 @@ addon:RegisterModule({
 	end,
 
 	OnDisable = function(self)
+		addon:CancelOutOfCombatFade()
 		for _, frame in pairs(addon.registeredFrames) do
 			if frame then
 				frame:Show()

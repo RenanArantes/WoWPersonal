@@ -68,6 +68,50 @@ function mod:AddSettings(category, layout)
 	)
 	Settings.CreateCheckbox(category, debugSetting, L["Toggle debug output"])
 
+	-- Seção: opacidade total após sair de combate
+	layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["Out of Combat Hide"] or "Ocultar Fora de Combate"))
+
+	local function GetFadeEnabled()
+		return addon.db and addon.db.outOfCombatFadeEnabled or false
+	end
+	local function SetFadeEnabled(value)
+		if addon.db then addon.db.outOfCombatFadeEnabled = value end
+	end
+	local fadeSetting = Settings.RegisterProxySetting(
+		category,
+		"WoWPersonal_OutOfCombatFadeEnabled",
+		Settings.VarType.Boolean,
+		L["Enable out of combat hide"] or "Ocultar frames após sair de combate",
+		Settings.Default.False,
+		GetFadeEnabled,
+		SetFadeEnabled
+	)
+	Settings.CreateCheckbox(category, fadeSetting,
+		L["Enable out of combat hide tooltip"] or "Após X segundos fora de combate os frames ficam completamente invisíveis")
+
+	local function GetFadeDelay()
+		return addon.db and addon.db.outOfCombatFadeDelay or 3
+	end
+	local function SetFadeDelay(value)
+		if addon.db then addon.db.outOfCombatFadeDelay = value end
+	end
+	local fadeDelaySetting = Settings.RegisterProxySetting(
+		category,
+		"WoWPersonal_OutOfCombatFadeDelay",
+		Settings.VarType.Number,
+		L["Seconds after leaving combat"] or "Segundos até ocultar",
+		3,
+		GetFadeDelay,
+		SetFadeDelay
+	)
+	local fadeDelayOptions = Settings.CreateSliderOptions(1, 60, 1)
+	fadeDelayOptions:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function(v)
+		return string.format("%ds", v)
+	end)
+	Settings.CreateSlider(category, fadeDelaySetting, fadeDelayOptions,
+		L["Seconds after leaving combat tooltip"] or "Tempo de espera antes de ocultar os frames completamente")
+
+	-- Seção: configurações por cenário
 	for _, scenarioKey in ipairs(SCENARIO_ORDER) do
 		local label = SCENARIO_LABELS[scenarioKey] or scenarioKey
 		local color = SCENARIO_COLORS[scenarioKey] or ""
