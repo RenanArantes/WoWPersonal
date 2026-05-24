@@ -28,6 +28,10 @@
     "CreateSettingsButtonInitializer",
     "ACCEPT",
     "CANCEL",
-    "CreateSettingsListSectionHeaderInitializer"
+    "CreateSettingsListSectionHeaderInitializer",
+    "GameTooltip_Hide",
+    "ReloadUI",
+    "StaticPopup_Show",
+    "EditModeManagerFrame"
   ]
 }

@@ -16,6 +16,8 @@ Modules\Visibility\VisibilityConfig.lua
 Modules\Visibility\CooldownManagerIntegration.lua
 Modules\Visibility\EditModeIntegration.lua
 
+Modules\Evoker\Evoker.lua
+
 Core.lua
 Config.lua
 UI.lua
