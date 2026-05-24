@@ -41,6 +41,8 @@ local DEFAULTS = {
 	evokerDisintegrateClipGradient = true,
 	evokerMassDisintegrateWarning = true,
 	evokerChainOverlayOpacity = 0.25,
+	-- Módulo ClipAdvice (indicador de essência para clip do Disintegrate)
+	clipAdviceEnabled = true,
 	scenarios = {
 		city = { enabled = true, transparencyInCombat = 1.0, transparencyOutOfCombat = 1.0 },
 		instance_pve = { enabled = true, transparencyInCombat = 1.0, transparencyOutOfCombat = 1.0 },
