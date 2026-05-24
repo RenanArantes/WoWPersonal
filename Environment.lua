@@ -36,6 +36,11 @@ local DEFAULTS = {
 	-- Opacidade total após sair de combate
 	outOfCombatFadeEnabled = false,
 	outOfCombatFadeDelay = 3,
+	-- Módulo Evoker
+	evokerDisintegrateMarkers = true,
+	evokerDisintegrateClipGradient = true,
+	evokerMassDisintegrateWarning = true,
+	evokerChainOverlayOpacity = 0.25,
 	scenarios = {
 		city = { enabled = true, transparencyInCombat = 1.0, transparencyOutOfCombat = 1.0 },
 		instance_pve = { enabled = true, transparencyInCombat = 1.0, transparencyOutOfCombat = 1.0 },
@@ -226,7 +231,7 @@ addon.IsEventRegistered = function(_, ...) return addon.eventFrame:IsEventRegist
 -- which runs our initialization methods,
 -- and dispatches event to the addon namespace.
 addon.eventFrame:RegisterEvent("ADDON_LOADED")
-addon.eventFrame:SetScript("OnEvent", function(self, event, ...)
+addon.eventFrame:SetScript("OnEvent", function(_, event, ...)
 	if (event == "ADDON_LOADED") then
 		-- Nothing happens before this has fired for your addon.
 		-- When it fires, we remove the event listener
