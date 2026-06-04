@@ -33,9 +33,6 @@ local DEFAULTS = {
 	registeredFrames = {},
 	-- Estado de habilitação por módulo { [id] = { enabled = bool } }
 	modules = {},
-	-- Opacidade total após sair de combate
-	outOfCombatFadeEnabled = false,
-	outOfCombatFadeDelay = 3,
 	-- Módulo Evoker
 	evokerDisintegrateMarkers = true,
 	evokerDisintegrateClipGradient = true,
