@@ -18,6 +18,8 @@ Modules\Visibility\EditModeIntegration.lua
 
 Modules\Evoker\Evoker.lua
 
+Modules\Keybinds\Keybinds.lua
+
 Core.lua
 Config.lua
 UI.lua

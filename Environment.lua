@@ -41,6 +41,17 @@ local DEFAULTS = {
 	evokerDisintegrateClipGradient = true,
 	evokerMassDisintegrateWarning = true,
 	evokerChainOverlayOpacity = 0.25,
+	-- Módulo Keybinds (mostra atalhos das barras de ação nos ícones dos viewers)
+	keybindShow_Essential     = true,
+	keybindAnchor_Essential   = "TOPRIGHT",
+	keybindFontSize_Essential = 14,
+	keybindOffsetX_Essential  = -3,
+	keybindOffsetY_Essential  = -3,
+	keybindShow_Utility       = true,
+	keybindAnchor_Utility     = "TOPRIGHT",
+	keybindFontSize_Utility   = 12,
+	keybindOffsetX_Utility    = -3,
+	keybindOffsetY_Utility    = -3,
 	scenarios = {
 		city = { enabled = true, transparencyInCombat = 1.0, transparencyOutOfCombat = 1.0 },
 		instance_pve = { enabled = true, transparencyInCombat = 1.0, transparencyOutOfCombat = 1.0 },
