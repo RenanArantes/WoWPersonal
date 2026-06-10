@@ -111,6 +111,55 @@ function mod:AddSettings(category, layout)
 	Settings.CreateSlider(category, fadeDelaySetting, fadeDelayOptions,
 		L["Seconds after leaving combat tooltip"] or "Tempo de espera antes de ocultar os frames completamente")
 
+	-- Seção: frames do Cooldown Manager (registro com um clique)
+	layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L["Cooldown Manager Frames"]))
+
+	--- Cria um checkbox que registra/desregistra um frame nomeado do Cooldown Manager.
+	---@param settingKey string
+	---@param frameName string
+	---@param label string
+	---@param tooltip string
+	local function CreateCooldownFrameToggle(settingKey, frameName, label, tooltip)
+		local function GetRegistered()
+			return addon.registeredFrames[frameName] ~= nil
+		end
+		local function SetRegistered(value)
+			if value then
+				addon:RegisterFrame(frameName)
+			else
+				addon:UnregisterFrame(frameName)
+				local frame = _G[frameName]
+				if frame then
+					frame:Show()
+					frame:SetAlpha(1)
+				end
+			end
+		end
+		local setting = Settings.RegisterProxySetting(
+			category,
+			settingKey,
+			Settings.VarType.Boolean,
+			label,
+			Settings.Default.False,
+			GetRegistered,
+			SetRegistered
+		)
+		Settings.CreateCheckbox(category, setting, tooltip)
+	end
+
+	CreateCooldownFrameToggle(
+		"WoWPersonal_Control_EssentialCooldownViewer",
+		"EssentialCooldownViewer",
+		L["Control Essential Cooldown Viewer"],
+		L["Control Essential Cooldown Viewer tooltip"]
+	)
+	CreateCooldownFrameToggle(
+		"WoWPersonal_Control_UtilityCooldownViewer",
+		"UtilityCooldownViewer",
+		L["Control Utility Cooldown Viewer"],
+		L["Control Utility Cooldown Viewer tooltip"]
+	)
+
 	-- Seção: configurações por cenário
 	for _, scenarioKey in ipairs(SCENARIO_ORDER) do
 		local label = SCENARIO_LABELS[scenarioKey] or scenarioKey

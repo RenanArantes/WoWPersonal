@@ -52,7 +52,12 @@ A interface permite:
 
 ### Registrando Frames do Cooldown Manager
 
-Na interface principal, há um botão "Registrar EssentialCooldownViewer" que registra automaticamente o frame principal do Cooldown Manager. Você também pode registrar outros frames usando comandos de chat (veja abaixo).
+No painel de configuração (Opções > AddOns > WoWPersonal > Visibility Options), na seção "Cooldown Manager Frames", há dois interruptores que registram automaticamente os frames do Gerenciador de Recargas para controle de visibilidade por cenário:
+
+- **Control Essential Cooldown Viewer** — registra o frame `EssentialCooldownViewer` (gerenciador de recargas essenciais).
+- **Control Utility Cooldown Viewer** — registra o frame `UtilityCooldownViewer` (recarga de utilitários).
+
+Você também pode registrar outros frames usando comandos de chat (veja abaixo).
 
 ### Comandos de Chat (Avançado)
 
